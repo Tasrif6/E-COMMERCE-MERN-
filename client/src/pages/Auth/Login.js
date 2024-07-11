@@ -19,15 +19,12 @@ const Login = () => {
         e.preventDefault();
         try {
           const res = await axios.post(`/api/v1/auth/login`,{email,password});
-          if(res && res.data.success){
-            toast.success(res.data && res.data.message);
-            setAuth({
-              ...auth,
-              user: res.data.user,
-              token: res.data.token,
-            })
-            localStorage.setItem("auth", JSON.stringify(res.data));
-            navigate(location.state || '/');
+          if (res && res.data.success) {
+            toast.success(res.data.message);
+            // Save userId in session storage and navigate to OTP verification page
+            sessionStorage.setItem('userId', res.data.userId);
+            navigate('/verify-otp');
+            
           }else{
             toast.error(res.data.message);
           }

@@ -1,5 +1,6 @@
 import { urlencoded } from "express";
 import { comparePassword, hashPassword } from "../helpers/authHelper.js";
+import { generateOTP, sendEmail} from '../helpers/2faUtils.js';
 import userModel from "../models/userModel.js";
 import JWT from "jsonwebtoken";
 
@@ -55,55 +56,97 @@ export const registerController = async (req,res) => {
     }
 };
 
-export const loginController = async (req,res) => {
+export const loginController = async (req, res) => {
     try {
-        const {email,password} = req.body
-        //validation
-        if(!email || !password){
-            return res.status(404).send({
-                success:false,
-                message:'Invalid email or password'
-            })
-        }
-        //check user
-        const user = await userModel.findOne({email})
-        if (!user){
-            return res.status(404).send({
-                success:false,
-                mesaage: 'Email is not registered'
+        const { email, password } = req.body;
+
+        // Validation
+        if (!email || !password) {
+            return res.status(400).send({
+                success: false,
+                message: 'Invalid email or password',
             });
         }
-        const match = await comparePassword(password,user.password)
-        if(!match){
-            return res.status(200).send({
-                success:false,
-                message:'Invalid Password'
+
+        // Check user
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            return res.status(404).send({
+                success: false,
+                message: 'Email is not registered',
             });
         }
-        //token
-        const token = await JWT.sign({_id: user._id}, process.env.JWT_SECRET, {
-            expiresIn: "7d",
-        });
+
+        // Check password
+        const match = await comparePassword(password, user.password);
+        if (!match) {
+            return res.status(400).send({
+                success: false,
+                message: 'Invalid Password',
+            });
+        }
+
+        // Generate OTP
+        const otp = generateOTP();
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
+
+        // Store OTP and expiry time in user document
+        user.otp = otp;
+        user.otpExpires = otpExpires;
+        await user.save();
+
+        // Send OTP
+        await sendEmail(user.email, 'Your OTP Code', `Your OTP code is ${otp}`);
+
+        // Respond with user ID for verification
         res.status(200).send({
             success: true,
-            message: "login successfully",
-            user: {
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                address: user.address,
-            },
-            token,
+            message: 'OTP sent',
+            userId: user._id,
         });
-    } catch(error) {
+
+    } catch (error) {
         console.log(error);
         res.status(500).send({
-            success:false,
-            message:"Error in login",
-            error
-        })
+            success: false,
+            message: 'Error in login',
+            error,
+        });
     }
+};
 
+export const verifyOTPController = async (req, res) => {
+    const { userId, otp } = req.body;
+    try {
+        const user = await userModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ success: false, message: 'User not found' });
+        }
+        if (user.otp !== otp) {
+            return res.status(400).send({ success: false, message: 'Invalid OTP' });
+        }
+        if (user.otpExpires < Date.now()) {
+            return res.status(400).send({ success: false, message: 'OTP has expired' });
+        }
+        
+        user.otp = null;
+        user.otpExpires = null;
+        await user.save();
+
+        const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '7d',
+        });
+
+        res.status(200).send({
+            success: true,
+            message: 'OTP verified',
+            user,
+            token,
+        });
+    } catch (error) {
+        console.error("Error verifying OTP:", error);  // Log the error for debugging
+        res.status(500).send({ success: false, message: 'Error verifying OTP', error });
+    }
 };
 
 //forgotPasswordcontroller
