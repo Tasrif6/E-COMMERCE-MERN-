@@ -11,6 +11,8 @@ import Login from './pages/Auth/Login';
 import PrivateRoute from './components/Routes/Private';
 import Dashboard from './pages/user/Dashboard';
 import ForgotPassword from './pages/Auth/ForgotPassword';
+import CartPage from './pages/CartPage';
+
 
 
 function App() {
@@ -21,6 +23,7 @@ function App() {
        <Route path="/dashboard" element={<PrivateRoute />}>
           <Route path="" element={<Dashboard />} />
        </Route>
+       <Route path='/cart' element={<CartPage />}/>
        <Route path='/register' element={<Register/>}/>
        <Route path='/login' element={<Login/>}/>
        <Route path='/forgot-password' element={<ForgotPassword/>}/>
