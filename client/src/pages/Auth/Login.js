@@ -28,6 +28,12 @@ const Login = () => {
             })
             localStorage.setItem("auth", JSON.stringify(res.data));
             navigate(location.state || '/');
+          // if (res && res.data.success) {
+          //   toast.success(res.data.message);
+          //   // Save userId in session storage and navigate to OTP verification page
+          //   sessionStorage.setItem('userId', res.data.userId);
+          //   navigate('/verify-otp');
+            
           }else{
             toast.error(res.data.message);
           }
