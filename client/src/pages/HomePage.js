@@ -123,7 +123,15 @@ const HomePage = () => {
     } catch(error) {
       console.log(error);
     }
-  };
+  }; 
+
+  return (
+    <layout title = {"All Products- Best Offers"}>
+      <div className = "container-fluid row mt-3">
+        <div className= "col-md-2">
+          <h4 className= "text-center"> Filter By Category </h4>
+          <div className= "d-flex flex-column">
+            {
 
 
 
