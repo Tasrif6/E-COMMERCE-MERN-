@@ -98,8 +98,16 @@ const HomePage = () => {
     let all = [..checked];
     if (value) {
       all.push(id);
+    } else {
+        all = all.filter((c) => c !== id);
     }
-  
+    setChecked(all);
+  };
+
+  useEffect(() => {
+     
+
+    
       
       
       
