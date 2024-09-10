@@ -105,10 +105,31 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-     
+    if (!checked.length || !radio.length) getAllProducts();
+  }, [checked.length, radio.length]);
 
-    
+  useEffect(() => {
+    if (checked.length || radio.length) filterProduct();
+  }, [checked, radio]);
+
+
+  const filterProduct = async () => {
+    try {
+      const { data } = await.axios.get('api/v1/product/product-filters', {
+         checked,
+         radio,
+      });
+      setProducts(data?.products);
+    } catch(error) {
+      console.log(error);
+    }
+  };
+
+
+
+
       
+  };
       
       
   
