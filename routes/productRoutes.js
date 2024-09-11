@@ -1,3 +1,5 @@
 import router from
 
-router.get
+router.get('/product-filters', productsFilterController)
+
+export defeault router
