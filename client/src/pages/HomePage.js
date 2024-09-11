@@ -138,9 +138,6 @@
 
       
 //   };
-      
-      
-  
 
 
 import React, { useState, useEffect } from 'react';
@@ -295,8 +292,8 @@ const HomePage = () => {
                         </Radio.Group>
                     </div>
                 </div>
-                <div className='col-md-9'>
-                    {JSON.stringify(radio, null, 4)}
+                <div className='col-md-9 offset-1'>
+                    {/* {JSON.stringify(radio, null, 4)} */}
                     <h4 className = "text-center">All Product List</h4>
                     <div className = "d-flex flex-wrap"></div>
                         {products?.map((p) => (
@@ -315,6 +312,7 @@ const HomePage = () => {
                                     </button>
                                     <button class= "btn btn-secondary ms-1" 
                                     onClick={() => {setCart(...cart, p)
+                                        localStorage.setItem('cart', JSON.stringify([...cart, p]))
                                         toast.success("Item added to the cart")
                                     }}> Add to Cart
                                     </button>
@@ -333,6 +331,18 @@ const HomePage = () => {
 
 
 };
+
+
+
+
+        
+        
+
+
+
+
+
+
 
 
 
