@@ -17,13 +17,25 @@ router.post(
   requiresSignIn,
   isAdmin
   formidable(),
-  createProductController,
+  createProductController
 );
 
-router.put();
+router.put(
+  requiresSignIn,
+  isAdmin
+  formidable(),
+  updateProductController
+);
 
 
+router.get('/get-product', getProductController)
 
-router.get('/product-filters', productsFilterController)
+router.get('/product-filters/:slug', getSingleProductController)
+
+router.get('/product-photo/:pid', productPhotoController)
+
+router.delete('/delete-product/:pid', deleteProductController)
+
+router.post('/product-filters', productFiltersController)
 
 export defeault router
