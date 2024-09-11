@@ -45,7 +45,7 @@ export const productFilterController = async (req,res) => {
         console.log(error);
         res.status(400).send({
             success:false,
-            message:'Error In Search Product API',
+            message:'Error While Filtering Products',
             error 
       });
     }
