@@ -141,7 +141,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import Layout from "../components/Layout/Layout";
+import Layout from "./../components/Layout/Layout";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Checkbox, Radio } from 'antd';
@@ -151,23 +151,23 @@ import toast from 'react-hot-toast';
 
 
 
-const HomePage = () => {
+  {
     const navigate = useNavigate();
     const [ cart, setCart ] = useCart();
     const [ products, setProducts ] = useState([]);
     const [ categories, setCategories ] = useState([]);
     const [ checked, setChecked ] = useState([]);
     const [ radio, setRadio ] = useState([]);
-    const [ total, setTotal ] = useState([]);
-    const [ page, setPage ] = useState([]);
+    const [ total, setTotal ] = useState(0);
+    const [ page, setPage ] = useState(1);
     const [ loading, setLoading ] = useState([]);
 
     //get cat
     const getAllCategory = async () => {
         try {
-            const { data } = await axios.get('api/v1/category/get-category');
+            const { data } = await axios.get("api/v1/category/get-category');
             if (data?.success) {
-            setCategories(data?.category);
+                setCategories(data?.category);
             }
         } catch(error) {
             console.log(error);
@@ -283,7 +283,7 @@ const HomePage = () => {
                     <h4 className = "text-center">Filter By Price</h4>
                     <div className = "d-flex flex-column">
                         <Radio.Group onChange= {(p) => setRadio(e.target.value)}>
-                            {Prices?.map((c) => ( 
+                            {Prices?.map(p => ( 
                             <div key = {p._id}>
                                 <Radio value = {p.array} > {p.name}
                                 </Radio>
@@ -296,28 +296,28 @@ const HomePage = () => {
                     {/* {JSON.stringify(radio, null, 4)} */}
                     <h4 className = "text-center">All Product List</h4>
                     <div className = "d-flex flex-wrap"></div>
-                        {products?.map((p) => (
-                            <div className='card m-2' style={{width: '18rem'}}>
-                                <img src= {`/api/v1/product/product-photo/${p._id}`}
-                                className='card-img-top'
-                                alt = {p.name}/>
+                    {products?.map((p) => (
+                        <div className='card m-2' style={{width: '18rem'}}>
+                            <img src= {`/api/v1/product/product-photo/${p._id}`}
+                            className='card-img-top'
+                            alt = {p.name}/>
 
-                                <div className='card-body'>
-                                    <h5 className='card-title'>{p.name}</h5>
-                                    <p className='card-text'>{p.description.subString(0,30)}...</p>
-                                    <p className='card-text'>{p.price} bdt </p>
-                                    <button className= "btn btn-primary ms-1"
-                                        onClick={() => navigate(`/product/${p.slug}`)
-                                    }>More Details
-                                    </button>
-                                    <button class= "btn btn-secondary ms-1" 
-                                    onClick={() => {setCart(...cart, p)
-                                        localStorage.setItem('cart', JSON.stringify([...cart, p]))
-                                        toast.success("Item added to the cart")
-                                    }}> Add to Cart
-                                    </button>
-                                </div>
+                            <div className='card-body'>
+                                <h5 className='card-title'>{p.name}</h5>
+                                <p className='card-text'>{p.description.subString(0,30)}...</p>
+                                <p className='card-text'>{p.price} bdt </p>
+                                <button className= "btn btn-primary ms-1"
+                                    onClick={() => navigate(`/product/${p.slug}`)
+                                }>More Details
+                                </button>
+                                <button class= "btn btn-secondary ms-1" 
+                                onClick={() => {setCart(...cart, p)
+                                    localStorage.setItem('cart', JSON.stringify([...cart, p]))
+                                    toast.success("Item added to the cart")
+                                }}> Add to Cart
+                                </button>
                             </div>
+                        </div>
                         ))}
                         <h1>Products</h1>
                     </div>
